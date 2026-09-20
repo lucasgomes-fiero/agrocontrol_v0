@@ -1,0 +1,11 @@
+{
+  "name": "AgroControl",
+  "short_name": "AgroControl",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F7F9F5",
+  "theme_color": "#0F3D2E",
+  "description": "Gestão inteligente do rebanho em modelo SaaS.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

@@ -1,0 +1,30 @@
+name: agrocontrol
+description: AgroControl SaaS - gestão inteligente do rebanho.
+publish_to: "none"
+version: 2.0.0+20
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  supabase_flutter: ^2.17.2
+  image_picker: ^1.2.3
+  flutter_svg: ^2.3.0
+  fl_chart: ^1.2.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/branding/agrocontrol_logo.svg
+    - assets/branding/agrocontrol_mark.svg

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: agrocontrol
+    runtime: static
+    buildCommand: |
+      git clone https://github.com/flutter/flutter.git --depth 1 -b stable .flutter
+      export PATH="$PWD/.flutter/bin:$PATH"
+      flutter pub get
+      flutter build web --release
+    staticPublishPath: ./build/web
+    pullRequestPreviewsEnabled: true
