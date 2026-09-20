@@ -220,7 +220,7 @@ class _WeightChart extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(12, 22, 18, 10),
           child: LineChart(
             LineChartData(
-              minY: (minY - padding).clamp(0, double.infinity),
+              minY: (minY - padding).clamp(0.0, double.infinity).toDouble(),
               maxY: maxY + padding,
               gridData: FlGridData(
                 drawVerticalLine: false,
