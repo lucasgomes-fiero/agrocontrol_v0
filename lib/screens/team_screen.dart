@@ -47,7 +47,14 @@ class _TeamScreenState extends State<TeamScreen> {
     );
     if (result == null) return;
     try {
-      await FarmService().invite(farmId: widget.farm.id, email: result.email, role: result.role);
+      await FarmService().invite(
+        farmId: widget.farm.id,
+        email: result.email,
+        role: result.role,
+        mode: result.createDirectly ? 'create' : 'invite',
+        fullName: result.fullName,
+        password: result.password,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Convite/equipe atualizado com sucesso.')));
       await _load();
@@ -133,7 +140,17 @@ class _TeamScreenState extends State<TeamScreen> {
 class _InviteData {
   final String email;
   final String role;
-  const _InviteData(this.email, this.role);
+  final bool createDirectly;
+  final String fullName;
+  final String password;
+
+  const _InviteData(
+    this.email,
+    this.role, {
+    required this.createDirectly,
+    this.fullName = '',
+    this.password = '',
+  });
 }
 
 class _InviteDialog extends StatefulWidget {
@@ -145,18 +162,24 @@ class _InviteDialog extends StatefulWidget {
 
 class _InviteDialogState extends State<_InviteDialog> {
   final _form = GlobalKey<FormState>();
+  final _name = TextEditingController();
   final _email = TextEditingController();
+  final _password = TextEditingController();
   String _role = 'member';
+  bool _createDirectly = true;
+  bool _hidePassword = true;
 
   @override
   void dispose() {
+    _name.dispose();
     _email.dispose();
+    _password.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Convidar para a fazenda'),
+        title: Text(_createDirectly ? 'Criar acesso' : 'Convidar para a fazenda'),
         content: Form(
           key: _form,
           child: SizedBox(
@@ -164,6 +187,24 @@ class _InviteDialogState extends State<_InviteDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: true, icon: Icon(Icons.person_add_alt_1), label: Text('Criar acesso')),
+                    ButtonSegment(value: false, icon: Icon(Icons.mark_email_unread_outlined), label: Text('Enviar convite')),
+                  ],
+                  selected: {_createDirectly},
+                  onSelectionChanged: (value) => setState(() => _createDirectly = value.first),
+                ),
+                const SizedBox(height: 14),
+                if (_createDirectly) ...[
+                  TextFormField(
+                    controller: _name,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(labelText: 'Nome completo'),
+                    validator: (v) => v == null || v.trim().length < 2 ? 'Informe o nome.' : null,
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 TextFormField(
                   key: const Key('inviteEmailField'),
                   controller: _email,
@@ -171,6 +212,25 @@ class _InviteDialogState extends State<_InviteDialog> {
                   decoration: const InputDecoration(labelText: 'E-mail'),
                   validator: (v) => v == null || !v.contains('@') ? 'Informe um e-mail válido.' : null,
                 ),
+                if (_createDirectly) ...[
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _password,
+                    obscureText: _hidePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Senha inicial',
+                      helperText: 'Mínimo de 8 caracteres',
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(() => _hidePassword = !_hidePassword),
+                        icon: Icon(_hidePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                      ),
+                    ),
+                    validator: (v) {
+                      if (!_createDirectly) return null;
+                      return v == null || v.length < 8 ? 'Use pelo menos 8 caracteres.' : null;
+                    },
+                  ),
+                ],
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: _role,
@@ -192,9 +252,18 @@ class _InviteDialogState extends State<_InviteDialog> {
             key: const Key('sendInviteButton'),
             onPressed: () {
               if (!_form.currentState!.validate()) return;
-              Navigator.pop(context, _InviteData(_email.text.trim(), _role));
+              Navigator.pop(
+                context,
+                _InviteData(
+                  _email.text.trim(),
+                  _role,
+                  createDirectly: _createDirectly,
+                  fullName: _name.text.trim(),
+                  password: _password.text,
+                ),
+              );
             },
-            child: const Text('Enviar convite'),
+            child: Text(_createDirectly ? 'Criar acesso' : 'Enviar convite'),
           ),
         ],
       );
