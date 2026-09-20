@@ -35,13 +35,11 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
     await tester.pumpAndSettle();
 
-    final before = tester.widget<TextFormField>(find.byKey(const Key('passwordField')));
-    expect(before.obscureText, isTrue);
+    expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('togglePassword')));
     await tester.pump();
 
-    final after = tester.widget<TextFormField>(find.byKey(const Key('passwordField')));
-    expect(after.obscureText, isFalse);
+    expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
   });
 }
