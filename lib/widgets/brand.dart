@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../core/app_theme.dart';
 
 class AgroWordmark extends StatelessWidget {
@@ -8,12 +7,13 @@ class AgroWordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      'assets/branding/agrocontrol_logo.svg',
+    return Image.asset(
+      'assets/branding/agrocontrol_logo.png',
       height: height,
       fit: BoxFit.contain,
       alignment: Alignment.centerLeft,
-      semanticsLabel: 'AgroControl',
+      filterQuality: FilterQuality.high,
+      semanticLabel: 'AgroControl',
     );
   }
 }
@@ -23,11 +23,13 @@ class AgroMark extends StatelessWidget {
   const AgroMark({super.key, this.size = 56});
 
   @override
-  Widget build(BuildContext context) => SvgPicture.asset(
-        'assets/branding/agrocontrol_mark.svg',
+  Widget build(BuildContext context) => Image.asset(
+        'assets/branding/agrocontrol_mark.png',
         width: size,
         height: size,
-        semanticsLabel: 'AgroControl',
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+        semanticLabel: 'AgroControl',
       );
 }
 
