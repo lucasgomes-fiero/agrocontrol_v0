@@ -21,23 +21,21 @@ class FarmService {
   }) async {
     final user = _client.auth.currentUser;
     if (user == null) throw const AuthException('Usuário não autenticado.');
-    final row = await _client
-        .from('farms')
-        .insert({
-          'owner_id': user.id,
-          'name': name.trim(),
-          'city': city?.trim(),
-          'state': state?.trim().toUpperCase(),
-        })
-        .select()
-        .single();
-    return Farm(
-      id: row['id'].toString(),
-      name: row['name'].toString(),
-      city: row['city']?.toString(),
-      state: row['state']?.toString(),
-      role: 'owner',
-    );
+
+    final farmName = name.trim();
+    await _client.from('farms').insert({
+      'owner_id': user.id,
+      'name': farmName,
+      'city': city?.trim(),
+      'state': state?.trim().toUpperCase(),
+    });
+
+    final farms = await listFarms();
+    final created = farms.where((farm) => farm.name == farmName).toList();
+    if (created.isEmpty) {
+      throw Exception('Fazenda criada, mas não foi possível carregar o acesso.');
+    }
+    return created.last;
   }
 
   Future<List<Map<String, dynamic>>> members(String farmId) async {
