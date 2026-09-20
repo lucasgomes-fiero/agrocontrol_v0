@@ -1,3 +1,4 @@
+
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -33,20 +34,28 @@ Deno.serve(async (req: Request) => {
     const farmId = String(body.farm_id ?? "");
     const email = String(body.email ?? "").trim().toLowerCase();
     const role = String(body.role ?? "member");
+    const mode = String(body.mode ?? "invite");
+    const fullName = String(body.full_name ?? "").trim();
+    const password = String(body.password ?? "");
 
     if (!farmId || !email || !["admin", "member", "viewer"].includes(role)) {
-      return reply({ error: "Dados do convite inválidos." }, 400);
+      return reply({ error: "Dados de acesso inválidos." }, 400);
+    }
+    if (!email.includes("@")) return reply({ error: "Informe um e-mail válido." }, 400);
+    if (mode === "create" && password.length < 8) {
+      return reply({ error: "A senha inicial precisa ter pelo menos 8 caracteres." }, 400);
     }
 
-    const { data: membership } = await admin
+    const { data: membership, error: membershipError } = await admin
       .from("farm_members")
       .select("role")
       .eq("farm_id", farmId)
       .eq("user_id", current.user.id)
       .maybeSingle();
 
+    if (membershipError) throw membershipError;
     if (!membership || !["owner", "admin"].includes(membership.role)) {
-      return reply({ error: "Apenas proprietários e administradores podem convidar." }, 403);
+      return reply({ error: "Apenas proprietários e administradores podem criar acessos." }, 403);
     }
 
     let target: any = null;
@@ -57,10 +66,35 @@ Deno.serve(async (req: Request) => {
       if (data.users.length < 1000) break;
     }
 
+    let created = false;
     if (!target) {
-      const { data, error } = await admin.auth.admin.inviteUserByEmail(email);
-      if (error) return reply({ error: error.message }, 400);
-      target = data.user;
+      if (mode === "create") {
+        const { data, error } = await admin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: { full_name: fullName },
+        });
+        if (error) return reply({ error: error.message }, 400);
+        target = data.user;
+        created = true;
+      } else {
+        const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+          data: { full_name: fullName },
+        });
+        if (error) return reply({ error: error.message }, 400);
+        target = data.user;
+        created = true;
+      }
+    }
+
+    if (!target) return reply({ error: "Não foi possível criar ou localizar o usuário." }, 500);
+
+    if (fullName && !created) {
+      const { error: profileError } = await admin.from("profiles")
+        .update({ full_name: fullName })
+        .eq("id", target.id);
+      if (profileError) throw profileError;
     }
 
     const { error: upsertError } = await admin.from("farm_members").upsert(
@@ -69,7 +103,7 @@ Deno.serve(async (req: Request) => {
     );
     if (upsertError) throw upsertError;
 
-    return reply({ ok: true, user_id: target.id, email, role });
+    return reply({ ok: true, user_id: target.id, email, role, mode, created });
   } catch (error) {
     return reply({ error: error instanceof Error ? error.message : String(error) }, 500);
   }
