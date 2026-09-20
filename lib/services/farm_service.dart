@@ -55,10 +55,20 @@ class FarmService {
     required String farmId,
     required String email,
     required String role,
+    String mode = 'invite',
+    String fullName = '',
+    String password = '',
   }) async {
     final response = await _client.functions.invoke(
       'invite-farm-member',
-      body: {'farm_id': farmId, 'email': email.trim(), 'role': role},
+      body: {
+        'farm_id': farmId,
+        'email': email.trim(),
+        'role': role,
+        'mode': mode,
+        'full_name': fullName.trim(),
+        'password': password,
+      },
     );
     if (response.status < 200 || response.status >= 300) {
       final data = response.data;
