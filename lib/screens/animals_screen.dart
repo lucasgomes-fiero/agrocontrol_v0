@@ -173,7 +173,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
                     sliver: SliverList.separated(
                       itemCount: _items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 9),
+                      separatorBuilder: (_, _) => const SizedBox(height: 9),
                       itemBuilder: (context, index) {
                         final animal = _items[index];
                         return Card(

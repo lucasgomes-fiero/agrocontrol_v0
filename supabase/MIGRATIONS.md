@@ -12,6 +12,7 @@ Migrations aplicadas no banco de produção:
 | 20260920000108 | profiles_email_for_team |
 | 20260920000811 | viewer_read_only |
 | 20260920000939 | farm_members_profile_relation |
+| 20260920001339 | protect_farm_owner_membership |
 
 ## Modelo multi-tenant
 

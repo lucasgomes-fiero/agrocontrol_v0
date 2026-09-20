@@ -92,7 +92,7 @@ class _TeamScreenState extends State<TeamScreen> {
             : ListView.separated(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 90),
                 itemCount: _members.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final member = _members[index];
                   final profile = Map<String, dynamic>.from(member['profiles'] as Map? ?? {});
