@@ -274,7 +274,8 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(20),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [AppColors.darkGreen, AppColors.forest, Color(0xFF2E7A4C)],
@@ -283,24 +284,72 @@ class _Hero extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Row(
+        child: Stack(
           children: [
-            const AgroMark(size: 82),
-            const SizedBox(width: 16),
-            Expanded(
+            Positioned(
+              right: -34,
+              top: -48,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: .045),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 42,
+              bottom: -52,
+              child: Container(
+                width: 118,
+                height: 118,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.lime.withValues(alpha: .07),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 110),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .10),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const Text(
+                      'VISÃO DO REBANHO',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 13),
                   const Text(
                     'Manejo que vira resultado.',
-                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w900,
+                      height: 1.12,
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 7),
                   Text(
                     stats.animals == 0
                         ? 'Cadastre animais para liberar os indicadores.'
                         : '${stats.animals} animais sob controle em $farmName.',
-                    style: TextStyle(color: Colors.white.withValues(alpha: .82)),
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: .84),
+                      height: 1.35,
+                    ),
                   ),
                 ],
               ),
