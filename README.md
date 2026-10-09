@@ -56,3 +56,14 @@ As mudanças do banco foram aplicadas através de migrations no projeto Supabase
 `profiles`, `farms`, `farm_members`, `animals`, `weighings`, `health_events` e `animal_media`.
 
 Veja também [docs/QA_CHECKLIST.md](docs/QA_CHECKLIST.md).
+
+
+## Aplicativos móveis (Android e iOS)
+
+O workflow `.github/workflows/mobile.yml` prepara as plataformas Flutter e valida builds móveis:
+- Android: gera APK de release e publica o arquivo como artefato do GitHub Actions.
+- iOS: gera um build de simulador sem assinatura. Para instalar em iPhone físico ou publicar na App Store ainda é necessário configurar assinatura/certificados Apple e perfil de provisionamento.
+
+Para gerar o APK, abra **Actions → Mobile builds → Run workflow** no GitHub. Quando o job terminar, abra a execução e baixe `agrocontrol-android-apk` em **Artifacts**.
+
+O build não instala automaticamente nos aparelhos. O APK deve ser instalado no Android após baixá-lo, autorizando a instalação dessa fonte. A distribuição pública requer uma etapa separada de assinatura/publicação.
